@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@ethersproject/bignumber": "^5.4.2",
     "@vite/vitejs": "^2.3.14",
     "@vite/vitejs-http": "^2.3.14",
     "deta": "^1.0.1",
