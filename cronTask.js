@@ -1,7 +1,6 @@
 const { 
     getUnreceivedTransaction,
     receiveTransaction,
-    sendTransaction,
 } = require('./viteUtils')
 const {
     findUserIdByName,
@@ -123,9 +122,11 @@ async function checkMentions () {
 }
 
 
-;(async() => {
-    await checkDeposits()
-    await recoveryDeposits()
-    await checkMentions()
-    await checkDMs()
-})()
+module.exports = {
+    async cronTask () {
+        await checkDeposits()
+        await recoveryDeposits()
+        await checkMentions()
+        await checkDMs()
+    },
+}

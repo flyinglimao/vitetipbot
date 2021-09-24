@@ -65,13 +65,23 @@ actions.withdraw = async (text, dm) => {
 
     const balance = (await user.get(dm.sender_id) || {}).value || 0
     let amount = balance
-    if (amountStr.length) {
+    if (amountStr && amountStr.length) {
         amount = parseFloat(amountStr)
         if (balance < amount) {
             console.debug('Balance insufficient')
             sendDirectMessage(dm.sender_id, `Oops, you don't have enough $VITE. Your balance: ${balance}`)
             return
         }
+        if (amount === 0) {
+            console.debug('Withdraw 0')
+            sendDirectMessage(dm.sender_id, `You have successfully withdraw 0 $VITE to ${address}, but it doens't need a transaction 😅`)
+            return
+        }
+    }
+    if (amount === 0) {
+        console.debug('Withdraw 0')
+        sendDirectMessage(dm.sender_id, `Oops, you don't have enough $VITE. Your balance: ${balance}`)
+        return
     }
     console.debug(`Start withdraw ${amount} to ${address}`)
     user.put(balance - amount, dm.sender_id)
