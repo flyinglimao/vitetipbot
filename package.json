@@ -3,10 +3,12 @@
     "@ethersproject/bignumber": "^5.4.2",
     "@vite/vitejs": "^2.3.14",
     "@vite/vitejs-http": "^2.3.14",
+    "axios": "^0.21.4",
     "deta": "^1.0.1",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
+    "twit": "^2.2.11",
     "twitter": "^1.7.1"
   }
 }
