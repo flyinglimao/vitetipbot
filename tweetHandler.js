@@ -89,6 +89,8 @@ actions.tip = async (text, tweet) => {
                 status_id: tweet.id,
                 hash: 'offchain',
                 timestamp: time,
+                from_screen_name: tweet.screen_name,
+                to_screen_name: target,
             }, (1e13 - time) + '_' + tweet.user_id),
             user.put(senderBalance - amount, tweet.user_id),
             user.put(receiverBalance + amount, receiverId),
@@ -108,7 +110,9 @@ actions.tip = async (text, tweet) => {
             to: receiverId,
             status_id: tweet.id,
             hash: 'init',
-            timestamp: new Date().getTime()
+            timestamp: time,
+            from_screen_name: tweet.screen_name,
+            to_screen_name: target,
         }, (1e13 - time) + '_' + tweet.user_id)
         system.update({ value: system.util.increment() }, 'NUMBER_OF_TIPS')
         system.update({ value: system.util.increment(amount) }, 'TOTAL_TIPS')

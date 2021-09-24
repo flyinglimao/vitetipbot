@@ -1,5 +1,5 @@
 const axios = require('axios')
-const { system } = require('./database')
+const { system, tip } = require('./database')
 
 const { App } = require('deta')
 const express = require('express')
@@ -34,6 +34,15 @@ app.get('/', async (req, res) => {
                 })
             })
     })
+})
+
+app.get('/recent', async (req, res) => {
+    tip.fetch({
+        'to?not_contains': '!'
+    }, { limit: 20 })
+        .then(({ items: tips }) => {
+            res.render('recent', { tips })
+        })
 })
 
 app.lib.cron(cronTask)
