@@ -21,6 +21,8 @@ async function getMentionedTweets (sinceId = '1') {
     return data.reverse().map(tweet => ({
         id: tweet.id_str,
         text: tweet.text,
+        user_id: tweet.user.id_str,
+        screen_name: tweet.user.screen_name,
     }))
 }
 async function replyToTweet(tweetId, text) {
@@ -31,7 +33,7 @@ async function replyToTweet(tweetId, text) {
             auto_populate_reply_metadata: true,
         }, function (err, data) {
             if (err) return rej(err)
-            res(data)
+            res(data.id_str)
         })
     })
 }
@@ -47,10 +49,16 @@ async function _getDirectMessage (cursor) {
         })
     })
 }
-async function getDirectMessage (sinceId = 0) {
+// string number compare
+function largerThan(a, b) {
+    if (a.length > b.length) return true
+    if (a.length < b.length) return false
+    return a > b
+}
+async function getDirectMessage (sinceId = '0') {
     let res = await _getDirectMessage()
     let data = res.events
-    while (data.slice(-1)[0].id > sinceId && res.next_cursor) {
+    while (largerThan(data.slice(-1)[0].id, sinceId) && res.next_cursor) {
         res = await _getDirectMessage(res.next_cursor)
         data = data.concat(res.events)
     }
@@ -58,7 +66,9 @@ async function getDirectMessage (sinceId = 0) {
         .filter(event => event.type === 'message_create'
             && event.message_create
             && event.message_create.target.recipient_id === process.env.TWITTER_USER_ID
+            && largerThan(event.id, sinceId)
         ).map(event => ({
+            id: event.id,
             text: (event.message_create || {message_data: {}}).message_data.text,
             sender_id: (event.message_create || {}).sender_id,
         })).reverse()
@@ -104,4 +114,5 @@ module.exports = {
     replyToTweet,
     getDirectMessage,
     findUserIdByName,
+    sendDirectMessage,
 }
