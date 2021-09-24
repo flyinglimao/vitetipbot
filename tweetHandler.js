@@ -71,7 +71,7 @@ actions.tip = async (text, tweet) => {
         }
     }
 
-    if (senderBalance - amount < 0) {
+    if (senderBalance < amount) {
         console.debug(`Balance insufficient`)
         const reply = await replyToTweet(tweet.id, 'Oops, you don\'t have enough $VITE to tip')
         console.debug('Reply: ' + reply)
@@ -119,7 +119,7 @@ actions.tip = async (text, tweet) => {
         }, tx.hash)
         tip.update({ hash: tx.hash }, tipKey)
         console.debug(`Tip updated: ${tipKey}`)
-        const reply = await replyToTweet(tweet.id, `You have successfully sent your ${amount} $VITE to @${target}. Transaction key: ${tipKey}, Hash: ${tx.hash}`)
+        const reply = await replyToTweet(tweet.id, `You have successfully sent your ${amount} $VITE to @${target}. Tip key: ${tipKey}, Tx hash: ${tx.hash}`)
         console.debug('Reply: ' + reply)
         return
     }
@@ -149,7 +149,7 @@ actions.donate = async (text, tweet) => {
 
     if (tipCheck.count) {
         console.debug(`Tipped off-chain`)
-        const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @billwu1999. Transaction key: ${tipCheck.items[0].key}`)
+        const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @billwu1999. Tip key: ${tipCheck.items[0].key}`)
         console.debug('Reply: ' + reply)
         return
     }
@@ -161,7 +161,7 @@ actions.donate = async (text, tweet) => {
         return
     }
     console.debug(`Donate off-chain`)
-    const [{key: txKey}, _, __] = await Promise.all([
+    const [{key: tipKey}, _, __] = await Promise.all([
         tip.insert({
             amount,
             from: tweet.user_id,
@@ -173,13 +173,13 @@ actions.donate = async (text, tweet) => {
         user.put(senderBalance - amount, tweet.user_id),
         user.put(targetBalance + amount, process.env.DONATE_TARGET),
     ])
-    const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @billwu1999. Transaction key: ${txKey}`)
+    const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @billwu1999. Tip key: ${tipKey}`)
     console.debug('Reply: ' + reply)
 }
 
 function handler (tweet) {
     const actionKeys = Object.keys(actions)
-    const regex = tweet.text.match(RegExp(`(${actionKeys.join('|')}) .*`))
+    const regex = tweet.text.match(RegExp(`(${actionKeys.join('|')})( .*)?$`))
     return actions[regex[1]](regex[0], tweet)
 }
 

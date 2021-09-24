@@ -58,6 +58,7 @@ function largerThan(a, b) {
 async function getDirectMessage (sinceId = '0') {
     let res = await _getDirectMessage()
     let data = res.events
+    if (!data || data.length === 0) return []
     while (largerThan(data.slice(-1)[0].id, sinceId) && res.next_cursor) {
         res = await _getDirectMessage(res.next_cursor)
         data = data.concat(res.events)

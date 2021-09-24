@@ -15,6 +15,7 @@ const {
     system,
 } = require('./database');
 const { handler: tweetHandler } = require('./tweetHandler');
+const { handler: dmHandler } = require('./dmHandler');
 
 function sleep (time) {
     return new Promise(res => setTimeout(res, time))
@@ -36,7 +37,8 @@ async function checkDeposits () {
                 amount: unreceived.amount,
                 from: '!blackhole',
                 to: '!developer',
-                status_id: 'offchain',
+                status_id: 'NOT_STATUS: tx no owner',
+                hash: 'offchain',
                 timestamp: new Date().getTime()
             })
             const userRecord = await user.get(process.env.DONATE_TARGET)
@@ -97,13 +99,13 @@ async function recoveryDeposits () {
 }
 
 /* Handle Tweet DM */
-async function checkDM () {
+async function checkDMs () {
     const { value: sinceId } = await system.get('DM_SINCE_ID') || { value: '0' }
     const dms = await getDirectMessage(sinceId)
     console.debug('DMs: ' + JSON.stringify(dms.map(e => e.id)))
     for (const dm of dms) {
         console.debug('Processing DM: ' + dm.id)
-
+        await dmHandler(dm)
         await system.put(dm.id, 'DM_SINCE_ID')
     }
 }
@@ -125,4 +127,5 @@ async function checkMentions () {
     await checkDeposits()
     await recoveryDeposits()
     await checkMentions()
+    await checkDMs()
 })()

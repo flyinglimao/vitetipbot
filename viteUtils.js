@@ -62,4 +62,5 @@ module.exports = {
     getUnreceivedTransaction,
     receiveTransaction,
     sendTransaction,
+    address: account.address,
 }
