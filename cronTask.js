@@ -32,14 +32,15 @@ async function checkDeposits () {
             console.debug('No user can collect this tx, make it as a donation')
             await receiveTransaction(unreceived.hash).catch(() => null)
             console.debug('Received ' + unreceived.hash)
+            const time = new Date().getTime()
             tip.put({
                 amount: unreceived.amount,
                 from: '!blackhole',
                 to: '!developer',
                 status_id: 'NOT_STATUS: tx no owner',
                 hash: 'offchain',
-                timestamp: new Date().getTime()
-            })
+                timestamp: time
+            }, (1e13 - time) + '_' + 'blackhole')
             const userRecord = await user.get(process.env.DONATE_TARGET)
             const userBalance = userRecord.count ? userRecord.items[0] : 0
             user.put(userBalance + unreceived.amount, process.env.DONATE_TARGET)

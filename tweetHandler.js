@@ -3,6 +3,7 @@ const {
     tip,
     user,
     address,
+    system,
 } = require('./database')
 const {
     findUserIdByName,
@@ -60,7 +61,7 @@ actions.tip = async (text, tweet) => {
         const tipRecord = tipCheck.items[0]
         if (tipRecord.hash === 'init') {
             console.debug(`Tipped but don't know if tx finished`)
-            const reply = await replyToTweet(tweet.id, `You sent your ${amount} $VITE to @${target} but I don't know if @${target} received it. If no, please contact @billwu1999. Transaction key: ${txKey}`)
+            const reply = await replyToTweet(tweet.id, `You sent your ${amount} $VITE to @${target} but I don't know if @${target} received it. If no, please contact @billwu1999. Transaction key: ${tipRecord.key}`)
             console.debug('Reply: ' + reply)
             return
         } else {
@@ -79,24 +80,28 @@ actions.tip = async (text, tweet) => {
     }
     if (!receiverAddress) {
         console.debug(`Receiver didn't register to a address, tip off-chain`)
-        const [{key: txKey}, _, __] = await Promise.all([
+        const time = new Date().getTime()
+        const [{key: tipKey}, _, __] = await Promise.all([
             tip.insert({
                 amount,
                 from: tweet.user_id,
                 to: receiverId,
                 status_id: tweet.id,
                 hash: 'offchain',
-                timestamp: new Date().getTime()
-            }),
+                timestamp: time,
+            }, (1e13 - time) + '_' + tweet.user_id),
             user.put(senderBalance - amount, tweet.user_id),
             user.put(receiverBalance + amount, receiverId),
+            system.update({ value: system.util.increment() }, 'NUMBER_OF_TIPS'),
+            system.update({ value: system.util.increment(amount) }, 'TOTAL_TIPS'),
         ])
-        const reply = await replyToTweet(tweet.id, `You have successfully sent your ${amount} $VITE to @${target} via off-chain. Transaction key: ${txKey}`)
+        const reply = await replyToTweet(tweet.id, `You have successfully sent your ${amount} $VITE to @${target} via off-chain. Transaction key: ${tipKey}`)
         console.debug('Reply: ' + reply)
         return
     } else {
         console.debug(`Receiver registered to a address, tip on-chain`)
         user.put(senderBalance - amount, tweet.user_id)
+        const time = new Date().getTime()
         const { key: tipKey } = await tip.insert({
             amount,
             from: tweet.user_id,
@@ -104,7 +109,9 @@ actions.tip = async (text, tweet) => {
             status_id: tweet.id,
             hash: 'init',
             timestamp: new Date().getTime()
-        })
+        }, (1e13 - time) + '_' + tweet.user_id)
+        system.update({ value: system.util.increment() }, 'NUMBER_OF_TIPS')
+        system.update({ value: system.util.increment(amount) }, 'TOTAL_TIPS')
         console.debug(`Tip inserted: ${tipKey}`)
         // FIXME: recover send but not return tx
         const tx = await sendTransaction(receiverAddress.value, amount, 'ViteTipBot-' + tipKey + ' @' + tweet.screen_name)
@@ -161,6 +168,7 @@ actions.donate = async (text, tweet) => {
         return
     }
     console.debug(`Donate off-chain`)
+    const time = new Date().getTime()
     const [{key: tipKey}, _, __] = await Promise.all([
         tip.insert({
             amount,
@@ -168,10 +176,12 @@ actions.donate = async (text, tweet) => {
             to: '!developer',
             status_id: tweet.id,
             hash: 'offchain',
-            timestamp: new Date().getTime()
-        }),
+            timestamp: time,
+        }, (1e13 - time) + '_' + tweet.user_id),
         user.put(senderBalance - amount, tweet.user_id),
         user.put(targetBalance + amount, process.env.DONATE_TARGET),
+        system.update({ value: system.util.increment() }, 'NUMBER_OF_TIPS'),
+        system.update({ value: system.util.increment(amount) }, 'TOTAL_TIPS'),
     ])
     const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @billwu1999. Tip key: ${tipKey}`)
     console.debug('Reply: ' + reply)

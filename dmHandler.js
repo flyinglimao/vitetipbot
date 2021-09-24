@@ -32,7 +32,11 @@ There are some DM commands:
 !unset_address : unset your address, tips will be recorded in my brain
 !balance : get your balance
 !withdraw <address> <amount?> : withdraw <amount> $VITE from pool, withdraw all if amount isn't determine
-!donate <amount> : donate to operator of the bot`)
+!donate <amount> : donate to operator of the bot
+
+There are Tweet commands:
+tip <amount> @<user> : tip <amount> $VITE to <user>
+donate <amount> : donate <amount> to operator`)
 }
 actions.set_address = async (text, dm) => {
     const { groups } = text.match(/!set_address\s+(?<address>\S+)/) || {}
@@ -124,6 +128,7 @@ actions.donate = async (text, dm) => {
         return
     }
     console.debug(`Donate off-chain`)
+    const time = new Date().getTime()
     const [{key: tipKey}, _, __] = await Promise.all([
         tip.insert({
             amount,
@@ -131,10 +136,12 @@ actions.donate = async (text, dm) => {
             to: '!developer',
             status_id: 'NOT_STATUS: dm donate',
             hash: 'offchain',
-            timestamp: new Date().getTime()
-        }),
+            timestamp: time,
+        }, (1e13 - time) + '_' + dm.sender_id),
         user.put(senderBalance - amount, dm.sender_id),
         user.put(targetBalance + amount, process.env.DONATE_TARGET),
+        system.update({ value: system.util.increment() }, 'NUMBER_OF_TIPS'),
+        system.update({ value: system.util.increment(amount) }, 'TOTAL_TIPS'),
     ])
     sendDirectMessage(dm.sender_id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @billwu1999. Tip key: ${tipKey}`)
 }
