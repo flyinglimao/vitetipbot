@@ -98,7 +98,7 @@ async function findUserIdByName (name) {
         })
     })
 }
-;(async() => console.log(await findUserIdByName('bill_test_acc22')))()
+
 module.exports = {
     getMentionedTweets,
     replyToTweet,

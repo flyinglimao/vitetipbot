@@ -55,5 +55,5 @@ async function sendTransaction (toAddress, amount, memo) {
 module.exports = {
     getUnreceivedTransaction,
     receiveTransaction,
-    sendTo,
+    sendTransaction,
 }
