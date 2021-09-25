@@ -6,6 +6,7 @@ const {
   findUserIdByName,
   getDirectMessage,
   getMentionedTweets,
+  sendDirectMessage,
 } = require('./twitterApi')
 const {
   user,
@@ -69,6 +70,7 @@ async function checkDeposits () {
           status: 'FINISHED',
           updated_at: new Date().getTime(),
         }, unreceived.hash),
+        sendDirectMessage(userId, `You received ${unreceived.amount} $VITE from deposit`),
         sleep(1000),
       ])
       console.debug(`Balance updated: from ${unreceived.hash} add ${unreceived.amount} to user ${userId}`)
@@ -92,6 +94,7 @@ async function recoveryDeposits () {
         status: 'FINISHED',
         updated_at: new Date().getTime(),
       }, processingReceive.hash),
+      sendDirectMessage(processingReceive.user_id, `You received ${processingReceive.balance} $VITE from deposit`),
       sleep(1000),
     ])
     console.debug(`Balance updated: from ${processingReceive.hash} add ${processingReceive.balance} to user ${processingReceive.user_id}`)

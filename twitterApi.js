@@ -75,7 +75,7 @@ async function getDirectMessage (sinceId = '0') {
     })).reverse()
 }
 async function sendDirectMessage (target, text) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     twitter.post('direct_messages/events/new', {
       event: {
         type: 'message_create',
@@ -89,8 +89,9 @@ async function sendDirectMessage (target, text) {
         },
       },
     }, function (err, data) {
-      if (err) return reject(err)
-      resolve(data)
+      if (err) console.error(err)
+      if (data) return resolve(data)
+      resolve('none')
     })
   })
 }
