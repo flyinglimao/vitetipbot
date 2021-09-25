@@ -36,10 +36,10 @@ const address = deta.Base(process.env.DETA_BASE_PREFIX + 'Address')
  *   Object: hash, status, user_id, balance, type
  *     status: PROCESSING or FINISHED
  *     type: DEPOSIT, WITHDRAW
- *   
+ *
  *   A deposit transaction will be processing after sent receive account block
  *   and be finished after balance updated.
- * 
+ *
  *   A withdraw transaction will be always finished.
  */
 const transaction = deta.Base(process.env.DETA_BASE_PREFIX + 'Transaction')
@@ -57,11 +57,11 @@ const tip = deta.Base(process.env.DETA_BASE_PREFIX + 'Tip')
 const system = deta.Base(process.env.DETA_BASE_PREFIX + 'System')
 
 module.exports = {
-    user,
-    address,
-    transaction,
-    tip,
-    system,
-    spend,
-    donate,
+  user,
+  address,
+  transaction,
+  tip,
+  system,
+  spend,
+  donate,
 }
