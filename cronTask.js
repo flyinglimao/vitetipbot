@@ -42,7 +42,7 @@ async function checkDeposits () {
         timestamp: time,
       }, (1e13 - time) + '_' + 'blackhole')
       const userRecord = await user.get(process.env.DONATE_TARGET)
-      const userBalance = userRecord.count ? userRecord.items[0] : 0
+      const userBalance = userRecord.value || 0
       user.put(userBalance + unreceived.amount, process.env.DONATE_TARGET)
       await sleep(1000)
       continue
