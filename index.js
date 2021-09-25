@@ -100,6 +100,35 @@ app.get('/tops', async (req, res) => {
   const usernames = await getNamesByUserIds([...spendTops.map((e) => e.key), ...donateTops.map((e) => e.key)])
   res.render('tops', { spendTops, donateTops, usernames })
 })
+app.get('/explorer', async (req, res) => {
+  let {
+    last,
+    tip: tipKey,
+    user,
+  } = req.query
+  if (typeof last !== 'string') last = undefined
+  if (typeof tipKey !== 'string') tipKey = undefined
+  if (typeof user !== 'string') user = undefined
+
+  const tips = tipKey
+    ? { items: [await tip.get(tipKey)] }
+    : await tip.fetch(
+      user && user.length
+        ? [
+            { from: user },
+            { from_screen_name: user.replace('@', '') },
+            { to: user },
+            { to_screen_name: user.replace('@', '') },
+          ]
+        : {}
+      , { limit: 50, last })
+
+  if (req.accepts('html')) {
+    res.render('explorer', { tips })
+  } else {
+    res.json(tips)
+  }
+})
 
 app.lib.cron(cronTask)
 app.lib.run(cronTask)

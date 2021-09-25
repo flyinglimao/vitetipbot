@@ -30,7 +30,7 @@ async function getUnreceivedTransaction () {
       }
     } else {
       return {
-        memo: Buffer.from(tx.data, 'base64').toString(),
+        memo: Buffer.from(tx.data || '', 'base64').toString(),
         amount: parseFloat(BigNumber.formatFixed(tx.amount, 18)),
         hash: tx.hash,
       }

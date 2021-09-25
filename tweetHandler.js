@@ -193,6 +193,7 @@ actions.donate = async (text, tweet) => {
       status_id: tweet.id,
       hash: 'offchain',
       timestamp: time,
+      from_screen_name: tweet.screen_name,
     }, (1e13 - time) + '_' + tweet.user_id),
     user.put(senderBalance - amount, tweet.user_id),
     user.put(targetBalance + amount, process.env.DONATE_TARGET),
@@ -207,6 +208,10 @@ actions.donate = async (text, tweet) => {
 function handler (tweet) {
   const actionKeys = Object.keys(actions)
   const regex = tweet.text.match(RegExp(`(${actionKeys.join('|')})( .*)?$`))
+  if (!regex) {
+    console.debug(tweet.text)
+    return replyToTweet(tweet.id, 'Sorry, I don\'t understand your message, please DM !help to check out help')
+  }
   return actions[regex[1]](regex[0], tweet)
 }
 

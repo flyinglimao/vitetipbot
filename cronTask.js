@@ -38,7 +38,7 @@ async function checkDeposits () {
         from: '!blackhole',
         to: '!developer',
         status_id: 'NOT_STATUS: tx no owner',
-        hash: 'offchain',
+        hash: unreceived.hash,
         timestamp: time,
       }, (1e13 - time) + '_' + 'blackhole')
       const userRecord = await user.get(process.env.DONATE_TARGET)

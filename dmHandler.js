@@ -7,7 +7,7 @@ const {
   system,
 } = require('./database')
 const {
-  sendDirectMessage,
+  sendDirectMessage, getNamesByUserIds,
 } = require('./twitterApi')
 const {
   sendTransaction,
@@ -139,6 +139,7 @@ actions.donate = async (text, dm) => {
     tip.insert({
       amount,
       from: dm.sender_id,
+      from_screen_name: '',
       to: '!developer',
       status_id: 'NOT_STATUS: dm donate',
       hash: 'offchain',
@@ -150,13 +151,19 @@ actions.donate = async (text, dm) => {
     system.update({ value: system.util.increment(amount) }, 'TOTAL_TIPS'),
     donate.update({ value: donate.util.increment(amount) }, dm.sender_id),
   ])
+  getNamesByUserIds([dm.sender_id]).then((map) => {
+    tip.update({ from_screen_name: map[dm.sender_id] }, (1e13 - time) + '_' + dm.sender_id)
+  })
   sendDirectMessage(dm.sender_id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @billwu1999. Tip key: ${tipKey}`)
 }
 
 function handler (dm) {
   const actionKeys = Object.keys(actions)
   const regex = dm.text.match(RegExp(`^\\!(${actionKeys.join('|')})( .*)?$`))
-  if (!regex) return sendDirectMessage(dm.sender_id, 'Sorry, I don\'t understand your message, please type !help to check out help')
+  if (!regex) {
+    console.debug(dm.text)
+    return sendDirectMessage(dm.sender_id, 'Sorry, I don\'t understand your message, please type !help to check out help')
+  }
   return actions[regex[1]](regex[0], dm)
 }
 
