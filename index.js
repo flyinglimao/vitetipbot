@@ -1,3 +1,5 @@
+require('./setup')
+
 const path = require('path')
 const axios = require('axios')
 const { system, tip, spend, donate } = require('./database')

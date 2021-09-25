@@ -1,0 +1,73 @@
+{
+    "name": "ViteTipBot",
+    "description": "Vite tip bot", 
+    "runtime": "nodejs14.x",
+    "env": [
+        {
+            "key": "TWITTER_CONSUMER_KEY",
+            "description": "Twitter Standalone App Consumer Key",
+            "value": "",
+            "required": true
+        },
+        {
+            "key": "TWITTER_CONSUMER_SECRET",
+            "description": "Twitter Standalone App Consumer Secret",
+            "value": "",
+            "required": true
+        },
+        {
+            "key": "TWITTER_ACCESS_TOKEN",
+            "description": "Twitter Standalone App Access Token",
+            "value": "",
+            "required": true
+        },
+        {
+            "key": "TWITTER_ACCESS_SECRET",
+            "description": "Twitter Standalone App Access Secret",
+            "value": "",
+            "required": true
+        },
+        {
+            "key": "TWITTER_USER_ID",
+            "description": "Twitter Bot User Id",
+            "value": "",
+            "required": true
+        },
+        {
+            "key": "DETA_BASE_PREFIX",
+            "description": "Deta Base Prefix, useful for seprate dev and production env",
+            "value": "",
+            "required": true
+        },
+        {
+            "key": "MNEMONIC",
+            "description": "Bot Mnemonic",
+            "value": "",
+            "required": true
+        },
+        {
+            "key": "ACCOUNT_INDEX",
+            "description": "Account index",
+            "value": "0",
+            "required": true
+        },
+        {
+            "key": "HTTP_RPC",
+            "description": "Node HTTP RPC",
+            "value": "",
+            "required": true
+        },
+        {
+            "key": "DONATE_TARGET",
+            "description": "Donate Target User Id",
+            "value": "1235538906482798592",
+            "required": true
+        },
+        {
+            "key": "DONATE_TARGET_HANDLE",
+            "description": "Donate Target User Handle",
+            "value": "billwu1999",
+            "required": true
+        }
+    ]
+}

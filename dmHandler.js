@@ -154,7 +154,7 @@ actions.donate = async (text, dm) => {
   getNamesByUserIds([dm.sender_id]).then((map) => {
     tip.update({ from_screen_name: map[dm.sender_id] }, (1e13 - time) + '_' + dm.sender_id)
   })
-  sendDirectMessage(dm.sender_id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @billwu1999. Tip key: ${tipKey}`)
+  sendDirectMessage(dm.sender_id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @${process.env.DONATE_TARGET_HANDLE}. Tip key: ${tipKey}`)
 }
 
 function handler (dm) {

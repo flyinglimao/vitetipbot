@@ -101,7 +101,7 @@
                                     </td>
                                     <td>
                                         <% if (tip.to === '!developer') { %>
-                                            <a href="https://twitter.com/billwu1999" rel="noopener noreferrer" target="_blank">
+                                            <a href="https://twitter.com/<%= process.env.DONATE_TARGET_HANDLE %>" rel="noopener noreferrer" target="_blank">
                                                 Operator
                                             </a>
                                         <% } else { %>
@@ -184,7 +184,7 @@
                     </td>
                     <td>
                         ${(tip.to === '!developer')
-                            ? `<a href="https://twitter.com/billwu1999" rel="noopener noreferrer" target="_blank">
+                            ? `<a href="https://twitter.com/<%= process.env.DONATE_TARGET_HANDLE %>" rel="noopener noreferrer" target="_blank">
                                 Operator
                             </a>`
                             : `<a href="https://twitter.com/${tip.to_screen_name}" rel="noopener noreferrer" target="_blank">

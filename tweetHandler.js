@@ -68,7 +68,7 @@ actions.tip = async (text, tweet) => {
     const tipRecord = tipCheck.items[0]
     if (tipRecord.hash === 'init') {
       console.debug('Tipped but don\'t know if tx finished')
-      const reply = await replyToTweet(tweet.id, `You sent your ${amount} $VITE to @${target} but I don't know if @${target} received it. If no, please contact @billwu1999. Transaction key: ${tipRecord.key}`)
+      const reply = await replyToTweet(tweet.id, `You sent your ${amount} $VITE to @${target} but I don't know if @${target} received it. If no, please contact @${process.env.DONATE_TARGET_HANDLE}. Transaction key: ${tipRecord.key}`)
       console.debug('Reply: ' + reply)
       return
     } else {
@@ -172,7 +172,7 @@ actions.donate = async (text, tweet) => {
 
   if (tipCheck.count) {
     console.debug('Tipped off-chain')
-    const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @billwu1999. Tip key: ${tipCheck.items[0].key}`)
+    const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @${process.env.DONATE_TARGET_HANDLE}. Tip key: ${tipCheck.items[0].key}`)
     console.debug('Reply: ' + reply)
     return
   }
@@ -201,7 +201,7 @@ actions.donate = async (text, tweet) => {
     system.update({ value: system.util.increment(amount) }, 'TOTAL_TIPS'),
     donate.update({ value: donate.util.increment(amount) }, tweet.user_id),
   ])
-  const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @billwu1999. Tip key: ${tipKey}`)
+  const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @${process.env.DONATE_TARGET_HANDLE}. Tip key: ${tipKey}`)
   console.debug('Reply: ' + reply)
 }
 
