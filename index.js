@@ -26,7 +26,7 @@ app.get('/', async (req, res) => {
       return res.render('index', {
         tipped,
         numberOfTips,
-        value: 87000 * usdPrice,
+        value: tipped * usdPrice,
       })
     }
 
