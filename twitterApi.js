@@ -96,7 +96,7 @@ async function sendDirectMessage (target, text) {
 }
 async function findUserIdByName (name) {
     return new Promise((res, rej) => {
-        twitter.post('users/lookup', {
+        twitter.get('users/lookup', {
             screen_name: name,
         }, function (err, data) {
             if (Array.isArray(data)) {
@@ -109,6 +109,31 @@ async function findUserIdByName (name) {
         })
     })
 }
+const userNameCache = {}
+async function getNamesByUserIds (userIds) {
+    const userIdsToFetch = []
+    const idNameMap = {}
+    userIds.forEach(id => {
+        idNameMap[id] = userNameCache[id]
+        if (!userNameCache[id]) userIdsToFetch.push(id)
+    })
+    return new Promise((res, rej) => {
+        if (!userIdsToFetch.length) return res(idNameMap)
+
+        twitter.get('users/lookup', {
+            user_id: userIdsToFetch.join(','),
+        }, function (err, data) {
+            if (err) {
+                rej(err)
+            }
+            data.forEach(user => {
+                idNameMap[user.id_str] = user.screen_name
+                userNameCache[user.id_str] = user.screen_name
+            })
+            res(idNameMap)
+        })
+    })
+}
 
 module.exports = {
     getMentionedTweets,
@@ -116,4 +141,5 @@ module.exports = {
     getDirectMessage,
     findUserIdByName,
     sendDirectMessage,
+    getNamesByUserIds,
 }

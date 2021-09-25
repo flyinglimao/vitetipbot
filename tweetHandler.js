@@ -4,6 +4,8 @@ const {
     user,
     address,
     system,
+    spend,
+    donate,
 } = require('./database')
 const {
     findUserIdByName,
@@ -40,12 +42,17 @@ actions.tip = async (text, tweet) => {
         sender,
         receiverAddress,
         receiver,
-        tipCheck
+        tipCheck,
+        ___,
     ] = await Promise.all([
         user.get(tweet.user_id),
         address.get(receiverId),
         user.get(receiverId),
-        tip.fetch({ status_id: tweet.id })
+        tip.fetch({ status_id: tweet.id }),
+        spend.get(tweet.user_id)
+            .then(record => {
+                if (!record) spend.put(0, tweet.user_id)
+            }),
     ])
     const senderBalance = sender ? sender.value : 0
     const receiverBalance = receiver ? receiver.value : 0
@@ -96,6 +103,7 @@ actions.tip = async (text, tweet) => {
             user.put(receiverBalance + amount, receiverId),
             system.update({ value: system.util.increment() }, 'NUMBER_OF_TIPS'),
             system.update({ value: system.util.increment(amount) }, 'TOTAL_TIPS'),
+            spend.update({ value: spend.util.increment(amount) }, tweet.user_id),
         ])
         const reply = await replyToTweet(tweet.id, `You have successfully sent your ${amount} $VITE to @${target} via off-chain. Transaction key: ${tipKey}`)
         console.debug('Reply: ' + reply)
@@ -116,6 +124,7 @@ actions.tip = async (text, tweet) => {
         }, (1e13 - time) + '_' + tweet.user_id)
         system.update({ value: system.util.increment() }, 'NUMBER_OF_TIPS')
         system.update({ value: system.util.increment(amount) }, 'TOTAL_TIPS')
+        spend.update({ value: spend.util.increment(amount) }, tweet.user_id)
         console.debug(`Tip inserted: ${tipKey}`)
         // FIXME: recover send but not return tx
         const tx = await sendTransaction(receiverAddress.value, amount, 'ViteTipBot-' + tipKey + ' @' + tweet.screen_name)
@@ -149,11 +158,16 @@ actions.donate = async (text, tweet) => {
     const [
         sender,
         target,
-        tipCheck
+        tipCheck,
+        ___,
     ] = await Promise.all([
         user.get(tweet.user_id),
         user.get(process.env.DONATE_TARGET),
-        tip.fetch({ status_id: tweet.id })
+        tip.fetch({ status_id: tweet.id }),
+        donate.get(process.env.DONATE_TARGET)
+            .then(record => {
+                if (!record) donate.put(0, tweet.user_id)
+            }),
     ])
     const senderBalance = sender ? sender.value : 0
     const targetBalance = target ? target.value : 0
@@ -186,6 +200,7 @@ actions.donate = async (text, tweet) => {
         user.put(targetBalance + amount, process.env.DONATE_TARGET),
         system.update({ value: system.util.increment() }, 'NUMBER_OF_TIPS'),
         system.update({ value: system.util.increment(amount) }, 'TOTAL_TIPS'),
+        donate.update({ value: donate.util.increment(amount) }, tweet.user_id),
     ])
     const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @billwu1999. Tip key: ${tipKey}`)
     console.debug('Reply: ' + reply)

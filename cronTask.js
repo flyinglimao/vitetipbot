@@ -12,6 +12,7 @@ const {
     transaction,
     tip,
     system,
+    donate,
 } = require('./database');
 const { handler: tweetHandler } = require('./tweetHandler');
 const { handler: dmHandler } = require('./dmHandler');

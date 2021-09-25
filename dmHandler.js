@@ -114,13 +114,17 @@ actions.donate = async (text, dm) => {
     const [
         sender,
         target,
+        ___,
     ] = await Promise.all([
         user.get(dm.sender_id),
         user.get(process.env.DONATE_TARGET),
+        donate.get(process.env.DONATE_TARGET)
+            .then(record => {
+                if (!record) donate.put(0, dm.sender_id)
+            }),
     ])
     const senderBalance = sender ? sender.value : 0
     const targetBalance = target ? target.value : 0
-
 
     if (senderBalance < amount) {
         console.debug(`Balance insufficient`)
@@ -142,6 +146,7 @@ actions.donate = async (text, dm) => {
         user.put(targetBalance + amount, process.env.DONATE_TARGET),
         system.update({ value: system.util.increment() }, 'NUMBER_OF_TIPS'),
         system.update({ value: system.util.increment(amount) }, 'TOTAL_TIPS'),
+        donate.update({ value: donate.util.increment(amount) }, dm.sender_id),
     ])
     sendDirectMessage(dm.sender_id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @billwu1999. Tip key: ${tipKey}`)
 }

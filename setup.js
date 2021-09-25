@@ -7,5 +7,5 @@ const { system } = require('./database')
     ]).then(ary => {
         if (!ary[0]) system.put(0, 'TOTAL_TIPS')
         if (!ary[1]) system.put(0, 'NUMBER_OF_TIPS')
-    }) 
+    })
 })()

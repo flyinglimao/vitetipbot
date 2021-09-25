@@ -11,6 +11,20 @@ const deta = Deta(process.env.DETA_PROJECT_KEY)
 const user = deta.Base(process.env.DETA_BASE_PREFIX + 'User')
 
 /*
+ * Spend
+ *     Key: user_id
+ *   Value: spend_amount
+ */
+const spend = deta.Base(process.env.DETA_BASE_PREFIX + 'Spend')
+
+/*
+ * Donate
+ *     Key: user_id
+ *   Value: spend_amount
+ */
+const donate = deta.Base(process.env.DETA_BASE_PREFIX + 'Donate')
+
+/*
  * Address
  *     Key: user_id
  *   Value: address
@@ -48,4 +62,6 @@ module.exports = {
     transaction,
     tip,
     system,
+    spend,
+    donate,
 }
