@@ -25,7 +25,7 @@ actions.tip = async (text, tweet) => {
   const amount = parseFloat(amountStr || '')
   if (!amountStr || !target || !isFinite(amount)) {
     console.debug(`Invalid input ${text}`)
-    const reply = await replyToTweet(tweet.id, 'Oops, I can\'t understand what you want me to do, check out commands on https://vitetipbot.deta.dev/.')
+    const reply = await replyToTweet(tweet.id, 'Oops, I can\'t understand what you want me to do, check out commands on https://vitetipbot.limaois.me/.')
     console.debug('Reply: ' + reply)
     return
   }
@@ -148,7 +148,7 @@ actions.donate = async (text, tweet) => {
   const amount = parseFloat(amountStr || '')
   if (!amountStr || !isFinite(amount)) {
     console.debug(`Invalid input ${text}`)
-    const reply = await replyToTweet(tweet.id, 'It heard like you want to donate, thank you but I can\'t process it, check out commands on https://vitetipbot.deta.dev/.')
+    const reply = await replyToTweet(tweet.id, 'It heard like you want to donate, thank you but I can\'t process it, check out commands on https://vitetipbot.limaois.me/.')
     console.debug('Reply: ' + reply)
     return
   }
