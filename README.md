@@ -9,7 +9,7 @@ Please notes that this bot doesn't promise your coin won't be stolen or lost acc
 
 Usage
 -----
-You can find out more info on [Vite Tip Bot - Website](https://vitetipbot.limaois.me).
+You can find out more info on [Vite Tip Bot - Website](https://vitetipbot.deta.dev).
 
 ### DM Commands
 

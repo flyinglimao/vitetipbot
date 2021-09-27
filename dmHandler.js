@@ -109,7 +109,7 @@ actions.donate = async (text, dm) => {
   const amount = parseFloat(amountStr || '')
   if (!amountStr || !isFinite(amount)) {
     console.debug(`Invalid input ${text}`)
-    sendDirectMessage(dm.sender_id, 'It heard like you want to donate, thank you but I can\'t process it, check out commands on https://vitetipbot.limaois.me/.')
+    sendDirectMessage(dm.sender_id, 'It heard like you want to donate, thank you but I can\'t process it, check out commands on https://vitetipbot.deta.dev/.')
     return
   }
 

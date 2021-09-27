@@ -25,7 +25,7 @@ actions.tip = async (text, tweet) => {
   const amount = parseFloat(amountStr || '')
   if (!amountStr || !target || !isFinite(amount)) {
     console.debug(`Invalid input ${text}`)
-    const reply = await replyToTweet(tweet.id, 'Oops, I can\'t understand what you want me to do, check out commands on https://vitetipbot.limaois.me/.')
+    const reply = await replyToTweet(tweet.id, 'Oops, I can\'t understand what you want me to do, check out commands on https://vitetipbot.deta.dev/.')
     console.debug('Reply: ' + reply)
     return
   }
@@ -148,7 +148,7 @@ actions.donate = async (text, tweet) => {
   const amount = parseFloat(amountStr || '')
   if (!amountStr || !isFinite(amount)) {
     console.debug(`Invalid input ${text}`)
-    const reply = await replyToTweet(tweet.id, 'It heard like you want to donate, thank you but I can\'t process it, check out commands on https://vitetipbot.limaois.me/.')
+    const reply = await replyToTweet(tweet.id, 'It heard like you want to donate, thank you but I can\'t process it, check out commands on https://vitetipbot.deta.dev/.')
     console.debug('Reply: ' + reply)
     return
   }
@@ -207,12 +207,16 @@ actions.donate = async (text, tweet) => {
 
 function handler (tweet) {
   const actionKeys = Object.keys(actions)
-  const regex = tweet.text.match(RegExp(`(${actionKeys.join('|')})( .*)?$`))
-  if (!regex) {
+  const regex = tweet.text.match(RegExp(`@(?<mention>[a-zA-Z]+)\\s+(?<action>${actionKeys.join('|')})( .*)?$`))
+  if (!regex || regex.groups.mention.toLowerCase() !== 'vitetipbot') {
+    console.debug('Nothing to do with')
     console.debug(tweet.text)
-    return replyToTweet(tweet.id, 'Sorry, I don\'t understand your message, please DM !help to check out help')
+    if (actionKeys.some((actionKey) => tweet.text.includes(actionKey))) {
+      return replyToTweet(tweet.id, 'Sorry, I don\'t understand your message, please DM !help to check out help')
+    }
+    return
   }
-  return actions[regex[1]](regex[0], tweet)
+  return actions[regex.groups.action](regex[0], tweet)
 }
 
 module.exports = {
