@@ -162,7 +162,12 @@ function handler (dm) {
   const regex = dm.text.match(RegExp(`^\\!(${actionKeys.join('|')})( .*)?$`))
   if (!regex) {
     console.debug(dm.text)
-    return sendDirectMessage(dm.sender_id, 'Sorry, I don\'t understand your message, please type !help to check out help')
+    return sendDirectMessage(
+      dm.sender_id,
+      dm.text.startsWith('!')
+        ? 'Sorry, I don\'t understand your message, be sure to type in lowercase, or you can !help to check out help'
+        : 'Hi, if you want to execute an command, be sure to start command with ! and type in lowercase. If you\'re looking for helps, please DM @billwu1999 or go our Discord https://discord.gg/xJaVNjpt9f'
+    )
   }
   return actions[regex[1]](regex[0], dm)
 }
