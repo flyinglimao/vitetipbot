@@ -16,18 +16,18 @@ You can find out more info on [Vite Tip Bot - Website](https://vitetipbot.limaoi
 These commands can only be execute with direct message, click command to open chat page.
 
 * !help - Get a list of commands and hints of them
-* !set_address <address> - Bind your Twitter account to an address. Once you get a tip, this bot will send it to your wallet directly
+* !set_address &lt;address&gt; - Bind your Twitter account to an address. Once you get a tip, this bot will send it to your wallet directly
 * !unset_address - Unbind your Twitter account from the given address. Once you get a tip, this bot will record it in the database
 * !balance - Show your balance in the database
-* !withdraw <address> <amount?> - Withdraw <amount> $VITE to <address>, withdraw all if amount isn't given
-* !donate - Donate operator <amount> $VITE
+* !withdraw &lt;address&gt; &lt;amount?&gt; - Withdraw <amount> $VITE to <address>, withdraw all if amount isn't given
+* !donate - Donate operator &lt;amount&gt; $VITE
 
 ### Tweet Commands
 
 These commands can only be execute with Tweet, click command to open Tweet page. Don't forget to @ViteTipBot.
 
-* tip <amount> @<user> - Tip @<user> <amount> $VITE
-* donate <amount> - Donate operator <amount> $VITE
+* tip &lt;amount&gt; @&lt;user&gt; - Tip @<user> <amount> $VITE
+* donate &lt;amount&gt; - Donate operator <amount> $VITE
 
 
 Deploy
