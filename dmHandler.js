@@ -5,6 +5,7 @@ const {
   address: addressDB,
   donate,
   system,
+  antispam,
 } = require('./database')
 const {
   sendDirectMessage, getNamesByUserIds,
@@ -157,7 +158,27 @@ actions.donate = async (text, dm) => {
   sendDirectMessage(dm.sender_id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @${process.env.DONATE_TARGET_HANDLE}. Tip key: ${tipKey}`)
 }
 
-function handler (dm) {
+async function handler (dm) {
+  // antispam
+  const now = new Date().getTime()
+  const antispamUser = await antispam.get(dm.sender_id) || { counter: 0, timestamp: now }
+  if (antispamUser.counter >= 10 && now - antispamUser.timestamp < 3600000) {
+    // Block user who send too many dm
+    if (antispamUser.counter === 10) {
+      antispamUser.counter++
+      antispam.put(antispamUser, dm.sender_id)
+      return sendDirectMessage(
+        dm.sender_id,
+        'In order not to be marked as spam, I cannot response too many message. Come back after an hour.',
+      )
+    }
+    return
+  } else {
+    antispamUser.counter++
+    antispamUser.timestamp = new Date().getTime()
+    antispam.put(antispamUser, dm.sender_id)
+  }
+
   const actionKeys = Object.keys(actions)
   const regex = dm.text.match(RegExp(`^\\!(${actionKeys.join('|')})( .*)?$`))
   if (!regex) {

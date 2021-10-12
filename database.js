@@ -56,6 +56,13 @@ const tip = deta.Base(process.env.DETA_BASE_PREFIX + 'Tip')
  */
 const system = deta.Base(process.env.DETA_BASE_PREFIX + 'System')
 
+/*
+ * Antispam
+ *      Key: user_id (twitter)
+ *   Column: counter, timestamp
+ */
+const antispam = deta.Base(process.env.DETA_BASE_PREFIX + 'Antispam')
+
 module.exports = {
   user,
   address,
@@ -64,4 +71,5 @@ module.exports = {
   system,
   spend,
   donate,
+  antispam,
 }
