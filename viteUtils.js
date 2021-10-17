@@ -22,7 +22,7 @@ async function getUnreceivedTransaction () {
 
   transactions.reverse() // make the oldest tx on the top
   return transactions.map((tx) => {
-    if (tx.tokenId !== 'tti_5649544520544f4b454e6e40') {
+    if (tx.tokenId !== process.env.TOKEN_ADDRESS) {
       return {
         memo: '',
         amount: 0,

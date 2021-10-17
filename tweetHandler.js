@@ -61,19 +61,19 @@ actions.tip = async (text, tweet) => {
   // Recover
   if (tipCheck.count && !receiverAddress) {
     console.debug('Tipped off-chain')
-    const reply = await replyToTweet(tweet.id, `You have successfully sent your ${amount} $VITE to @${target} via off-chain. Transaction key: ${tipCheck.items[0].key}`)
+    const reply = await replyToTweet(tweet.id, `You have successfully sent your ${amount} $${process.env.TOKEN_NAME} to @${target} via off-chain. Transaction key: ${tipCheck.items[0].key}`)
     console.debug('Reply: ' + reply)
     return
   } else if (tipCheck.count) {
     const tipRecord = tipCheck.items[0]
     if (tipRecord.hash === 'init') {
       console.debug('Tipped but don\'t know if tx finished')
-      const reply = await replyToTweet(tweet.id, `You sent your ${amount} $VITE to @${target} but I don't know if @${target} received it. If no, please contact @${process.env.DONATE_TARGET_HANDLE}. Transaction key: ${tipRecord.key}`)
+      const reply = await replyToTweet(tweet.id, `You sent your ${amount} $${process.env.TOKEN_NAME} to @${target} but I don't know if @${target} received it. If no, please contact @${process.env.DONATE_TARGET_HANDLE}. Transaction key: ${tipRecord.key}`)
       console.debug('Reply: ' + reply)
       return
     } else {
       console.debug('Tipped on-chain')
-      const reply = await replyToTweet(tweet.id, `You have successfully sent your ${amount} $VITE to @${target}. Transaction key: ${tipRecord.key}, Hash: ${tipRecord.hash}`)
+      const reply = await replyToTweet(tweet.id, `You have successfully sent your ${amount} $${process.env.TOKEN_NAME} to @${target}. Transaction key: ${tipRecord.key}, Hash: ${tipRecord.hash}`)
       console.debug('Reply: ' + reply)
       return
     }
@@ -81,7 +81,7 @@ actions.tip = async (text, tweet) => {
 
   if (senderBalance < amount) {
     console.debug('Balance insufficient')
-    const reply = await replyToTweet(tweet.id, 'Oops, you don\'t have enough $VITE to tip')
+    const reply = await replyToTweet(tweet.id, `Oops, you don't have enough $${process.env.TOKEN_NAME} to tip`)
     console.debug('Reply: ' + reply)
     return
   }
@@ -105,7 +105,7 @@ actions.tip = async (text, tweet) => {
       system.update({ value: system.util.increment(amount) }, 'TOTAL_TIPS'),
       spend.update({ value: spend.util.increment(amount) }, tweet.user_id),
     ])
-    const reply = await replyToTweet(tweet.id, `You have successfully sent your ${amount} $VITE to @${target} via off-chain. Transaction key: ${tipKey}`)
+    const reply = await replyToTweet(tweet.id, `You have successfully sent your ${amount} $${process.env.TOKEN_NAME} to @${target} via off-chain. Transaction key: ${tipKey}`)
     console.debug('Reply: ' + reply)
   } else {
     console.debug('Receiver registered to a address, tip on-chain')
@@ -138,7 +138,7 @@ actions.tip = async (text, tweet) => {
     }, tx.hash)
     tip.update({ hash: tx.hash }, tipKey)
     console.debug(`Tip updated: ${tipKey}`)
-    const reply = await replyToTweet(tweet.id, `You have successfully sent your ${amount} $VITE to @${target}. Tip key: ${tipKey}, Tx hash: ${tx.hash}`)
+    const reply = await replyToTweet(tweet.id, `You have successfully sent your ${amount} $${process.env.TOKEN_NAME} to @${target}. Tip key: ${tipKey}, Tx hash: ${tx.hash}`)
     console.debug('Reply: ' + reply)
   }
 }
@@ -172,14 +172,14 @@ actions.donate = async (text, tweet) => {
 
   if (tipCheck.count) {
     console.debug('Tipped off-chain')
-    const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @${process.env.DONATE_TARGET_HANDLE}. Tip key: ${tipCheck.items[0].key}`)
+    const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $${process.env.TOKEN_NAME} to @${process.env.DONATE_TARGET_HANDLE}. Tip key: ${tipCheck.items[0].key}`)
     console.debug('Reply: ' + reply)
     return
   }
 
   if (senderBalance - amount < 0) {
     console.debug('Balance insufficient')
-    const reply = await replyToTweet(tweet.id, 'Thank you for donating! But you don\'t have enough $VITE 🥲')
+    const reply = await replyToTweet(tweet.id, `Thank you for donating! But you don't have enough $${process.env.TOKEN_NAME} 🥲`)
     console.debug('Reply: ' + reply)
     return
   }
@@ -201,7 +201,7 @@ actions.donate = async (text, tweet) => {
     system.update({ value: system.util.increment(amount) }, 'TOTAL_TIPS'),
     donate.update({ value: donate.util.increment(amount) }, tweet.user_id),
   ])
-  const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @${process.env.DONATE_TARGET_HANDLE}. Tip key: ${tipKey}`)
+  const reply = await replyToTweet(tweet.id, `Thank you for donating! You have successfully donate your ${amount} $${process.env.TOKEN_NAME} to @${process.env.DONATE_TARGET_HANDLE}. Tip key: ${tipKey}`)
   console.debug('Reply: ' + reply)
 }
 
