@@ -39,6 +39,13 @@ This project is designed to be deployed on Deta.
 
 You will need to create a Twitter project, a Standalone App, and an account. You will also need to find user ids to set up environment parameters. If all done, the bot should work.
 
+If you want to use the website, you should update ejs files manually.
+* Update `VITE` with your token name
+* Update `vite_314a687af3a1d471cd0bbdd92046432226d064580a084f5716` with your bot address
+* Update `@ViteTipBot` with twitter username of your bot and `twitter.com/ViteTipBot` with url of your bot
+* Update `vitetipbot.limaois.me` with your domain
+* Update or remove Discord link
+
 ### Deploy to Other
 To deploy on other cloud, there are some modification to be done.  
 

@@ -22,11 +22,11 @@ const { wallet: { isValidAddress } } = require('@vite/vitejs')
 const actions = {}
 actions.help = async (text, dm) => {
   sendDirectMessage(dm.sender_id, `\
-Thank you for using the @ViteTipBot!
+Thank you for using the @${process.env.TWITTER_USER_NAME}!
 
-DISCALIMER: @ViteTipBot don't promise your coin won't be stolen or lost accidentally, use it at your own risk.
+DISCALIMER: @${process.env.TWITTER_USER_NAME} don't promise your coin won't be stolen or lost accidentally, use it at your own risk.
 
-To start tipping, you will need to send $VITE to ${botAddress} with your Twitter username as memo.
+To start tipping, you will need to send $${process.env.TOKEN_NAME} to ${botAddress} with your Twitter username as memo.
 Or if you were tipped and haven't register a Vite address, you can create your wallet and use !withdraw command.
 
 There are some DM commands:
@@ -34,11 +34,11 @@ There are some DM commands:
 !set_address <address> : setup your address, tips will send to your address directly after setup
 !unset_address : unset your address, tips will be recorded in my brain
 !balance : get your balance
-!withdraw <address> <amount?> : withdraw <amount> $VITE from pool, withdraw all if amount isn't determine
+!withdraw <address> <amount?> : withdraw <amount> $${process.env.TOKEN_NAME} from pool, withdraw all if amount isn't determine
 !donate <amount> : donate to operator of the bot
 
 There are Tweet commands:
-tip <amount> @<user> : tip <amount> $VITE to <user>
+tip <amount> @<user> : tip <amount> $${process.env.TOKEN_NAME} to <user>
 donate <amount> : donate <amount> to operator`)
 }
 actions.set_address = async (text, dm) => {
@@ -59,7 +59,7 @@ actions.unset_address = async (text, dm) => {
 actions.balance = async (text, dm) => {
   const balance = (await user.get(dm.sender_id) || {}).value || 0
   sendDirectMessage(dm.sender_id, `Your balance: ${balance}`)
-  if (balance > 10000) sendDirectMessage(dm.sender_id, 'You might have too many $VITE here, remember that "Not your keys, not your coins"')
+  if (balance > 10000) sendDirectMessage(dm.sender_id, `You might have too many $${process.env.TOKEN_NAME} here, remember that "Not your keys, not your coins"`)
 }
 actions.withdraw = async (text, dm) => {
   const { groups } = text.match(/!withdraw\s+(?<address>\S+)(\s+(?<amount>[0-9.]+))?$/) || {}
@@ -76,18 +76,18 @@ actions.withdraw = async (text, dm) => {
     amount = parseFloat(amountStr)
     if (balance < amount) {
       console.debug('Balance insufficient')
-      sendDirectMessage(dm.sender_id, `Oops, you don't have enough $VITE. Your balance: ${balance}`)
+      sendDirectMessage(dm.sender_id, `Oops, you don't have enough $${process.env.TOKEN_NAME}. Your balance: ${balance}`)
       return
     }
     if (amount === 0) {
       console.debug('Withdraw 0')
-      sendDirectMessage(dm.sender_id, `You have successfully withdraw 0 $VITE to ${address}, but it doens't need a transaction 😅`)
+      sendDirectMessage(dm.sender_id, `You have successfully withdraw 0 $${process.env.TOKEN_NAME} to ${address}, but it doens't need a transaction 😅`)
       return
     }
   }
   if (amount === 0) {
     console.debug('Withdraw 0')
-    sendDirectMessage(dm.sender_id, `Oops, you don't have enough $VITE. Your balance: ${balance}`)
+    sendDirectMessage(dm.sender_id, `Oops, you don't have enough $${process.env.TOKEN_NAME}. Your balance: ${balance}`)
     return
   }
   console.debug(`Start withdraw ${amount} to ${address}`)
@@ -102,7 +102,7 @@ actions.withdraw = async (text, dm) => {
     type: 'WITHDRAW',
     created_at: new Date().getTime(),
   }, tx.hash)
-  sendDirectMessage(dm.sender_id, `You have successfully withdraw ${amount} $VITE to ${address}. Transaction hash: ${tx.hash}`)
+  sendDirectMessage(dm.sender_id, `You have successfully withdraw ${amount} $${process.env.TOKEN_NAME} to ${address}. Transaction hash: ${tx.hash}`)
 }
 actions.donate = async (text, dm) => {
   const { groups } = text.match(/!donate\s+\$?(?<amount>[0-9.]+)$/) || {}
@@ -131,7 +131,7 @@ actions.donate = async (text, dm) => {
 
   if (senderBalance < amount) {
     console.debug('Balance insufficient')
-    sendDirectMessage(dm.sender_id, 'Thank you for donating! But you don\'t have enough $VITE 🥲')
+    sendDirectMessage(dm.sender_id, `Thank you for donating! But you don't have enough $${process.env.TOKEN_NAME} 🥲`)
     return
   }
   console.debug('Donate off-chain')
@@ -155,7 +155,7 @@ actions.donate = async (text, dm) => {
   getNamesByUserIds([dm.sender_id]).then((map) => {
     tip.update({ from_screen_name: map[dm.sender_id] }, (1e13 - time) + '_' + dm.sender_id)
   })
-  sendDirectMessage(dm.sender_id, `Thank you for donating! You have successfully donate your ${amount} $VITE to @${process.env.DONATE_TARGET_HANDLE}. Tip key: ${tipKey}`)
+  sendDirectMessage(dm.sender_id, `Thank you for donating! You have successfully donate your ${amount} $${process.env.TOKEN_NAME} to @${process.env.DONATE_TARGET_HANDLE}. Tip key: ${tipKey}`)
 }
 
 async function handler (dm) {
